@@ -1,38 +1,17 @@
 # dev-camp
 
-## Directory Structure
+온라인 강의 수강권 판매 서비스
 
-```
-dev-camp
-├── .eslintrc.js
-├── .gitignore
-├── .prettierrc
-├── nest-cli.json
-├── package.json
-├── README.md
-├── src
-│  ├── .DS_Store
-│  ├── app.module.ts
-│  ├── auth
-│  │  ├── adapter
-│  │  │  ├── in
-│  │  │  │  └── auth.controller.ts
-│  │  │  └── out
-│  │  │    ├── auth.adapter.ts
-│  │  │    ├── auth.entity.ts
-│  │  │    └── auth.repository.ts
-│  │  ├── domain
-│  │  │  └── auth.ts
-│  │  └── port
-│  │    ├── in
-│  │    │  └── auth.useCase.ts
-│  │    └── out
-│  │      └── auth.port.ts
-│  ├── main.ts
-│  └── modules
-├── test
-│  └── jest-e2e.json
-├── tsconfig.build.json
-├── tsconfig.json
-└── yarn.lock
-```
+### 프로젝트 기간
+
+2024. 3. 4. ~ 2024. 3. 15 (2주, 1인)
+
+### Tech Spec
+
+- Backend Framework : Nest.js 10.3.0
+- Backend Language : Typescript
+- Database : PostgreSQL 14.9
+
+### 주요 기능
+
+- 카카오 로그인
