@@ -15,7 +15,7 @@ import {
   TokenBlacklist,
   User,
 } from './entities';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import dotenv from 'dotenv';
 
 dotenv.config();
