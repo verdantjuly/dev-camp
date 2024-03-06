@@ -20,7 +20,7 @@ export class UserRepository extends Repository<User> {
   }
 
   async findByKakaoPassword(password: string) {
-    return this.find({ where: { password, type: 'kakao' } });
+    return this.findOne({ where: { password, type: 'kakao' } });
   }
 
   async createUser(
