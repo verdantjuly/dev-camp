@@ -19,6 +19,10 @@ export class UserRepository extends Repository<User> {
     return this.findOneBy({ email });
   }
 
+  async findByGooglePassword(password: string) {
+    return this.findOne({ where: { password, type: 'google' } });
+  }
+
   async findByKakaoPassword(password: string) {
     return this.findOne({ where: { password, type: 'kakao' } });
   }

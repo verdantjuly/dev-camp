@@ -14,12 +14,23 @@ export class AuthController {
   @Get('login/kakao')
   @UseGuards(AuthGuard('kakao'))
   async kakaoCallback(@Req() req) {
-    await this.authService.OAuthLogin(req);
+    await this.authService.kakaoLogin(req);
+  }
+
+  @Get('login/google')
+  @UseGuards(AuthGuard('google'))
+  async googleCallback(@Req() req) {
+    await this.authService.googleLogin(req);
   }
 
   @Post('kakaokey')
   async kakaoKey() {
     return await this.authService.kakaoKey();
+  }
+
+  @Post('googlekey')
+  async googleKey() {
+    return await this.authService.googleKey();
   }
 
   @Post('email')

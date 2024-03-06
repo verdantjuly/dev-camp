@@ -30,6 +30,10 @@ export class UserService {
     return this.userRepository.findByKakaoPassword(password);
   }
 
+  async findByGooglePassword(password: string) {
+    return this.userRepository.findByGooglePassword(password);
+  }
+
   async sendEmail(email: string) {
     const verifyNumber =
       Math.floor(Math.random() * (999999 - 111111 + 1)) + 111111;

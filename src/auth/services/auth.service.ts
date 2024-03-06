@@ -16,7 +16,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async OAuthLogin(@Req() req) {
+  async kakaoLogin(@Req() req) {
     const user = await this.userService.findByKakaoPassword(req.user.password);
 
     if (!user) {
@@ -29,6 +29,26 @@ export class AuthService {
       );
     }
     const user2 = await this.userRepository.findByKakaoPassword(
+      req.user.password,
+    );
+    const accessToken = await this.createAccessToken(user2.id, user2);
+    const refreshToken = await this.createRefreshToken(user2.id, user2);
+    return { accessToken, refreshToken };
+  }
+
+  async googleLogin(@Req() req) {
+    const user = await this.userService.findByGooglePassword(req.user.password);
+
+    if (!user) {
+      await this.userService.createUser(
+        null,
+        req.user.name,
+        req.user.password,
+        'google',
+        null,
+      );
+    }
+    const user2 = await this.userRepository.findByGooglePassword(
       req.user.password,
     );
     const accessToken = await this.createAccessToken(user2.id, user2);
@@ -75,6 +95,12 @@ export class AuthService {
     return {
       kakaoJSKey: process.env.KAKAO_CLIENT_ID,
       kakaoRedirectURI: process.env.KAKAO_CALLBACK_URL,
+    };
+  }
+  async googleKey() {
+    return {
+      googleClientId: process.env.GOOGLE_CLIENT_ID,
+      googleRedirectURI: process.env.GOOGLE_CALLBACK_URL,
     };
   }
 }

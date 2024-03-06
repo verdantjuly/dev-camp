@@ -19,6 +19,7 @@ import { JwtModule } from '@nestjs/jwt';
 import dotenv from 'dotenv';
 import { RedisModule } from 'src/common/redis';
 import { Mail } from 'src/common';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ dotenv.config();
     AccessTokenRepository,
     RefreshTokenRepository,
 
+    GoogleStrategy,
     KakaoStrategy,
     UserService,
     AuthService,
@@ -52,6 +54,7 @@ dotenv.config();
     AccessTokenRepository,
     RefreshTokenRepository,
 
+    GoogleStrategy,
     KakaoStrategy,
     UserService,
     AuthService,
