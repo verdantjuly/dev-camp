@@ -17,6 +17,8 @@ import {
 } from './entities';
 import { JwtModule } from '@nestjs/jwt';
 import dotenv from 'dotenv';
+import { RedisModule } from 'src/common/redis';
+import { Mail } from 'src/common';
 
 dotenv.config();
 
@@ -33,6 +35,8 @@ dotenv.config();
   ],
   controllers: [AuthController],
   providers: [
+    RedisModule,
+    Mail,
     UserRepository,
     AccessTokenRepository,
     RefreshTokenRepository,
@@ -42,6 +46,8 @@ dotenv.config();
     AuthService,
   ],
   exports: [
+    RedisModule,
+    Mail,
     UserRepository,
     AccessTokenRepository,
     RefreshTokenRepository,

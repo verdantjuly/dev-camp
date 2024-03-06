@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from '../entities';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
+import { UserType } from '../types';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -13,14 +14,28 @@ export class UserRepository extends Repository<User> {
   ) {
     super(repo.target, repo.manager, repo.queryRunner);
   }
-  async findByKakaoPassword(password: string) {
-    return this.findOneBy({ password });
+
+  async findByEmail(email: string) {
+    return this.findOneBy({ email });
   }
 
-  async createUser(name: string, password: string) {
+  async findByKakaoPassword(password: string) {
+    return this.find({ where: { password, type: 'kakao' } });
+  }
+
+  async createUser(
+    email: string,
+    name: string,
+    password: string,
+    type: UserType,
+    phone: string,
+  ) {
     const user = new User();
+    user.email = email;
     user.name = name;
     user.password = password;
+    user.type = type;
+    user.phone = phone;
     return this.save(user);
   }
 }

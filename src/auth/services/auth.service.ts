@@ -1,4 +1,4 @@
-import { Injectable, Req } from '@nestjs/common';
+import { ConflictException, Injectable, Req } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../entities';
 import { AccessTokenRepository } from '../repositories';
@@ -15,18 +15,22 @@ export class AuthService {
   ) {}
 
   async OAuthLogin(@Req() req) {
-    let user = await this.userService.findByKakaoPassword(req.user.password);
+    const user = await this.userService.findByKakaoPassword(req.user.password);
 
-    if (!user)
-      user = await this.userService.createUser(
+    if (!user) {
+      const userData = await this.userService.createUser(
+        null,
         req.user.name,
         req.user.password,
+        'kakao',
+        null,
       );
-
-    const accessToken = this.createAccessToken(user.id, user);
-    const refreshToken = this.createRefreshToken(user.id, user);
-
-    return { accessToken, refreshToken };
+      const accessToken = this.createAccessToken(userData.id, userData);
+      const refreshToken = this.createRefreshToken(userData.id, userData);
+      return { accessToken, refreshToken };
+    } else {
+      throw new ConflictException();
+    }
   }
 
   async createAccessToken(payload: string, user: User): Promise<string> {
@@ -46,6 +50,7 @@ export class AuthService {
     await this.refreshTokenRepository.saveAccessToken(user, token, expiresAt);
     return token;
   }
+
   async kakaoKey() {
     return {
       kakaoJSKey: process.env.KAKAO_CLIENT_ID,

@@ -1,6 +1,6 @@
 import { BaseEntity } from 'src/common/enitty';
 import { Column, Entity, OneToMany } from 'typeorm';
-import { UserRole } from '../types';
+import { UserRole, UserType } from '../types';
 import { AccessToken } from './access-token.entity';
 import { RefreshToken } from './refresh-token.entity';
 import { AccessLog } from './access-log.entity';
@@ -10,6 +10,9 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar' })
   name: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  email: string;
+
   @Column({ type: 'varchar' })
   password: string;
 
@@ -18,6 +21,9 @@ export class User extends BaseEntity {
 
   @Column({ type: 'varchar', length: 30, default: 'user' })
   role: UserRole;
+
+  @Column({ type: 'varchar', length: 30, default: 'local' })
+  type: UserType;
 
   @OneToMany(() => AccessToken, token => token.user)
   accessToken: AccessToken[];
