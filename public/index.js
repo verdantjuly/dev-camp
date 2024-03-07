@@ -47,7 +47,7 @@ async function startGoogle() {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function email() {
+async function sendEmail() {
   const email = document.getElementById('email').value;
   const response = await fetch('./api/auth/email', {
     method: 'POST',
@@ -59,27 +59,33 @@ async function email() {
   if (response.status !== 201) {
     alert('이메일이 전송되지 않았습니다.');
     location.href = './';
+  } else if (response.status == 201) {
+    alert('이메일이 전송되었습니다.');
   }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function verify() {
+  const email = document.getElementById('email').value;
   const number = document.getElementById('verify-number').value;
   const response = await fetch('./api/auth/verify', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ number }),
+    body: JSON.stringify({ email, number }),
   });
   if (response.status !== 201) {
     alert('인증이 완료되지 않았습니다.');
     location.href = './';
+  } else if (response.status == 201) {
+    alert('인증이 완료되었습니다.');
   }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function signup() {
+  const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const confirm = document.getElementById('password-confirm').value;
   const name = document.getElementById('name').value;
@@ -94,25 +100,24 @@ async function signup() {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ password, name, phone }),
+    body: JSON.stringify({ email, password, name, phone }),
   });
   if (response.status == 201) {
-    console.log(response.status)
     alert('회원가입이 완료되었습니다.');
     const result = await response.json();
     localStorage.setItem('accessToken', result.accessToken);
     localStorage.setItem('refreshToken', result.refreshToken);
     location.href = './';
   } else {
-    alert('회원가입이 완료되지 않았습니다.');
+    console.log(response.status);
     location.href = './';
   }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function login() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
   const response = await fetch('./api/auth/login', {
     method: 'POST',
     headers: {

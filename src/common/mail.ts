@@ -4,7 +4,7 @@ export class Mail {
   async sendGmail(param) {
     const transporter = nodemailer.createTransport({
       service: 'gmail', // 메일 보내는 곳
-      prot: 587,
+      port: 587,
       host: 'smtp.gmail.com',
       secure: false,
       requireTLS: true,
