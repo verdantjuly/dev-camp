@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService, UserService } from '../services';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from '../dto';
@@ -13,14 +21,20 @@ export class AuthController {
 
   @Get('login/kakao')
   @UseGuards(AuthGuard('kakao'))
-  async kakaoCallback(@Req() req) {
-    await this.authService.kakaoLogin(req);
+  async kakaoCallback(@Req() req, @Res() res) {
+    const result = await this.authService.kakaoLogin(req);
+    return res.redirect(
+      `http://127.0.0.1:3000?refreshtoken=${result.refreshToken}&accesstoken=${result.accessToken}`,
+    );
   }
 
   @Get('login/google')
   @UseGuards(AuthGuard('google'))
-  async googleCallback(@Req() req) {
-    await this.authService.googleLogin(req);
+  async googleCallback(@Req() req, @Res() res) {
+    const result = await this.authService.googleLogin(req);
+    return res.redirect(
+      `http://127.0.0.1:3000?refreshtoken=${result.refreshToken}&accesstoken=${result.accessToken}`,
+    );
   }
 
   @Post('kakaokey')
