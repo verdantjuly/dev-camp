@@ -1,0 +1,68 @@
+name: build
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-check:
+    runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        node-version: [21.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - name: ✅ 체크아웃 source code.
+        uses: actions/checkout@v3
+
+      - name: ⚙️ ${{ matrix.node-version }} 버전의 노드로 세팅합니다.
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: ⚙️ 환경변수를 설정합니다.
+        working-directory: ./
+        run: |
+          pwd
+          touch .env
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+          echo DB_USER=${{ secrets.DB_USER }} >> .env
+          echo DB_PW=${{ secrets.DB_PW }} >> .env
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+          echo KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }} >> .env
+          echo KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }} >> .env
+          echo KAKAO_CALLBACK_URL=${{ secrets.KAKAO_CALLBACK_URL }} >> .env
+          echo USERS_MYSQL_PASSWORD=${{ secrets.USERS_MYSQL_PASSWORD }} >> .env
+          echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
+          echo GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
+          echo GOOGLE_CALLBACK_URL=${{ secrets.GOOGLE_CALLBACK_URL }} >> .env
+          echo ACCESS_EXPIRES_IN=${{ secrets.ADMIN_MYSQL_HOST }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} >> .env
+          echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> .env
+          echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> .env
+          echo NODEMAILER_EMAIL=${{ secrets.NODEMAILER_EMAIL }} >> .env3002
+          echo NODEMAILER_PASSWORD=${{ secrets.NODEMAILER_PASSWORD }} >> .env
+          echo JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} >> .env
+          echo JWT_SECRET_KEY_REFRESH=${{ secrets.JWT_SECRET_KEY_REFRESH }} >> .env
+          echo JWT_EXPIRE_TIME=${{ secrets.JWT_EXPIRE_TIME }} >> .env
+          echo JWT_EXPIRE_TIME_REFRESH=${{ secrets.JWT_EXPIRE_TIME_REFRESH }} >> .env
+          echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> .env
+          echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> .env
+          echo REDIS_USERNAME=${{ secrets.REDIS_USERNAME }} >> .env
+          echo REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} >> .env
+          echo NODEMAILER_EMAIL=${{ secrets.NODEMAILER_EMAIL }} >> .env
+          echo NODEMAILER_PASSWORD=${{ secrets.NODEMAILER_PASSWORD }} >> .env
+         
+          cat .env
+
+      - name: ✨ 패키지 설치
+        working-directory: ./
+        run: npm i
+
+      - name: ✨ 빌드 과정을 시작
+        working-directory: ./
+        run: npm run build

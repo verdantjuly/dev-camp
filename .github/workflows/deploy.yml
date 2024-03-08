@@ -1,0 +1,98 @@
+name: deploy
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        node-version: [21.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - name: ✅ 체크아웃 source code.
+        uses: actions/checkout@v3
+
+      - name: ⚙️ ${{ matrix.node-version }} 버전의 노드로 세팅합니다.
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: ⚙️ 환경변수를 설정합니다.
+        working-directory: ./
+        env:
+          DB_HOST: ${{secrets.DB_HOST}}
+          DB_PORT: ${{secrets.DB_PORT}}
+          DB_USER: ${{secrets.DB_USER}}
+          DB_PW: ${{secrets.DB_PW}}
+          DB_NAME: ${{secrets.DB_NAME}}
+          KAKAO_CLIENT_ID: ${{secrets.KAKAO_CLIENT_ID}}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_CALLBACK_URL: ${{secrets.KAKAO_CALLBACK_URL}}
+          GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
+          GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
+          GOOGLE_CALLBACK_URL: ${{secrets.GOOGLE_CALLBACK_URL}}
+          ACCESS_EXPIRES_IN: ${{secrets.ACCESS_EXPIRES_IN}}
+          JWT_SECRET: ${{secrets.JWT_SECRET}}
+          REDIS_PASSWORD: ${{secrets.REDIS_PASSWORD}}
+          REDIS_HOST: ${{secrets.REDIS_HOST}}
+          REDIS_PORT: ${{secrets.REDIS_PORT}}
+          NODEMAILER_EMAIL: ${{secrets.NODEMAILER_EMAIL}}
+          NODEMAILER_PASSWORD: ${{secrets.NODEMAILER_PASSWORD}}
+         
+        run: |
+          pwd
+          touch .env
+          echo "DB_HOST=$DB_HOST" >> .env
+          echo "DB_PORT=$DB_PORT" >> .env
+          echo "DB_USER=$DB_USER" >> .env
+          echo "DB_PW=$DB_PW" >> .env
+          echo "DB_NAME=$DB_NAME" >> .env
+          echo "KAKAO_CLIENT_ID=$KAKAO_CLIENT_ID" >> .env
+          echo "KAKAO_CLIENT_SECRET=$KAKAO_CLIENT_SECRET" >> .env
+          echo "KAKAO_CALLBACK_URL=$KAKAO_CALLBACK_URL" >> .env
+          echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
+          echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
+          echo "GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL" >> .env
+          echo "ACCESS_EXPIRES_IN=$ACCESS_EXPIRES_IN" >> .env
+          echo "JWT_SECRET=$JWT_SECRET" >> .env
+          echo "REDIS_PASSWORD=$REDIS_PASSWORD" >> .env
+          echo "REDIS_HOST=$REDIS_HOST" >> .env
+          echo "REDIS_PORT=$REDIS_PORT" >> .env
+          echo "NODEMAILER_EMAIL=$NODEMAILER_EMAIL" >> .env
+          echo "NODEMAILER_PASSWORD=$NODEMAILER_PASSWORD" >> .env
+         
+          cat .env
+
+      - name: ✨ 패키지 설치
+        working-directory: ./
+        run: npm install
+
+      - name: ✨ 빌드 과정을 시작
+        working-directory: ./
+        run: npm run build
+
+      - name: 📦 빌드한 코드를 압축
+        run: zip -r gthen.zip ./dist ./scripts ./appspec.yml ./.env ./package.json
+
+      - name: 🌎 AWS에 접속
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: 🦖 S3에 압축된 서버 코드를 업로드
+        run: aws s3 cp --region ap-northeast-2 ./devcamp.zip s3://devcamp-deploy-bucket
+
+      - name: 🚀 AWS codeDeploy로 배포를 시작
+        run: aws deploy create-deployment
+          --ignore-application-stop-failures
+          --application-name gthen-codedeploy
+          --deployment-config-name CodeDeployDefault.OneAtATime
+          --deployment-group-name dev
+          --s3-location bucket=gthen-deploy-bucket,bundleType=zip,key=devcamp.zip
