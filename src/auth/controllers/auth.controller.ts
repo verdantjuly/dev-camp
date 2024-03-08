@@ -24,7 +24,7 @@ export class AuthController {
   async kakaoCallback(@Req() req, @Res() res) {
     const result = await this.authService.kakaoLogin(req);
     return res.redirect(
-      `http://127.0.0.1:3000?refreshtoken=${result.refreshToken}&accesstoken=${result.accessToken}`,
+      `http://13.209.87.137:3000?refreshtoken=${result.refreshToken}&accesstoken=${result.accessToken}`,
     );
   }
 
@@ -33,7 +33,7 @@ export class AuthController {
   async googleCallback(@Req() req, @Res() res) {
     const result = await this.authService.googleLogin(req);
     return res.redirect(
-      `http://127.0.0.1:3000?refreshtoken=${result.refreshToken}&accesstoken=${result.accessToken}`,
+      `http://13.209.87.137:3000?refreshtoken=${result.refreshToken}&accesstoken=${result.accessToken}`,
     );
   }
 
