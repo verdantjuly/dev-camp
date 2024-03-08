@@ -43,7 +43,7 @@ jobs:
           REDIS_PORT: ${{secrets.REDIS_PORT}}
           NODEMAILER_EMAIL: ${{secrets.NODEMAILER_EMAIL}}
           NODEMAILER_PASSWORD: ${{secrets.NODEMAILER_PASSWORD}}
-         
+
         run: |
           pwd
           touch .env
@@ -65,7 +65,7 @@ jobs:
           echo "REDIS_PORT=$REDIS_PORT" >> .env
           echo "NODEMAILER_EMAIL=$NODEMAILER_EMAIL" >> .env
           echo "NODEMAILER_PASSWORD=$NODEMAILER_PASSWORD" >> .env
-         
+
           cat .env
 
       - name: ✨ yarn 설치
@@ -94,9 +94,4 @@ jobs:
         run: aws s3 cp --region ap-northeast-2 ./devcamp.zip s3://devcamp-deploy-bucket
 
       - name: 🚀 AWS codeDeploy로 배포를 시작
-        run: aws deploy create-deployment
-          --ignore-application-stop-failures
-          --application-name gthen-codedeploy
-          --deployment-config-name CodeDeployDefault.OneAtATime
-          --deployment-group-name dev
-          --s3-location bucket=devcamp-deploy-bucket,bundleType=zip,key=devcamp.zip
+        run: aws deploy create-deployment --ignore-application-stop-failures --application-name devcamp-deploy --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name devcamp --s3-location bucket=devcamp-deploy-bucket,bundleType=zip,key=devcamp.zip
