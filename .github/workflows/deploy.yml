@@ -70,14 +70,14 @@ jobs:
 
       - name: ✨ 패키지 설치
         working-directory: ./
-        run: npm install
+        run: yarn install
 
       - name: ✨ 빌드 과정을 시작
         working-directory: ./
-        run: npm run build
+        run: yarn run build
 
       - name: 📦 빌드한 코드를 압축
-        run: zip -r gthen.zip ./dist ./scripts ./appspec.yml ./.env ./package.json
+        run: zip -r devcamp.zip ./dist ./scripts ./appspec.yml ./.env ./package.json ./tsconfig.json ./tsconfig.build.json ./yarn.lock ./nest-cli.json ./public
 
       - name: 🌎 AWS에 접속
         uses: aws-actions/configure-aws-credentials@v1

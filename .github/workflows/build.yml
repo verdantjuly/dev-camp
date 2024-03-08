@@ -61,8 +61,8 @@ jobs:
 
       - name: ✨ 패키지 설치
         working-directory: ./
-        run: npm i
+        run: yarn install
 
       - name: ✨ 빌드 과정을 시작
         working-directory: ./
-        run: npm run build
+        run: yarn run build
