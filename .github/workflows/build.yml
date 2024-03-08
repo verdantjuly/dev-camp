@@ -59,6 +59,10 @@ jobs:
          
           cat .env
 
+      - name: ✨ yarn 설치
+        working-directory: ./
+        run: npm install yarn
+  
       - name: ✨ 패키지 설치
         working-directory: ./
         run: yarn install
