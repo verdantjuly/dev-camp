@@ -8,7 +8,4 @@ export class TokenBlacklist extends BaseEntity {
 
   @Column()
   tokenType: 'access' | 'refresh';
-
-  @Column({ type: 'timestamp' })
-  expiresAt: Date;
 }

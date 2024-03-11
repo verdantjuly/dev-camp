@@ -15,6 +15,7 @@ http://13.125.73.220:3000
 - Backend Framework : Nest.js 10.3.0
 - Backend Language : Typescript
 - Database : PostgreSQL 14.9
+- Cache : Redis
 
 ### 주요 기능
 
@@ -25,16 +26,27 @@ http://13.125.73.220:3000
   token이 포함되어 있는 쿼리 스트링이 붙는 로그인 페이지로 redirect하는 응답을 통해  
   프론트엔드에서 Access Token과 Refresh Token을 보관할 수 있게 하였습니다.
 
-- 로컬 로그인 : 이메일 인증 (nodemailer, argon2)  
+- 로컬 로그인 : 이메일 인증 (nodemailer, argon2, redis)  
   사용자가 원하는 경우 nodemailer를 통한 이메일 인증으로 회원 가입 하고 로그인 할 수 있도록 구현하였습니다.  
-  비밀번호 해싱 알고리즘으로는 Argon2를 사용하였습니다.  
+  인증번호는 redis에 email을 key값에 넣어 저장하고 대조합니다. 5분 뒤에 자동삭제 되도록 하였습니다. 비밀번호 해싱 알고리즘으로는 Argon2를 사용하였습니다.  
   Argon2는 메모리 하드 함수로서 대량의 메모리를 필요하기 때문에 고속 해싱 함수보다 강력한 보안을 제공합니다.  
   병렬처리에 특화되어 있어 단일 코어를 사용하는 bcrypt보다 멀티코어 시스템에서 더 빠른 해싱이 가능합니다.
 
 - CD : 자동 배포 (Github Actions, CodeDeploy)
+
   1. master 브랜치에 push.
   2. github Actions를 통해 자동으로 빌드.
   3. 빌드된 파일을 압축하여 S3 버킷에 올림.
   4. CodeDeploy를 이용하여 사용하는 EC2에서 S3버킷에 올라온 파일을 가져옴.
   5. 압축을 해제 하여 배포.
   6. PM2를 통해 올라온 파일을 자동으로 다시 띄움.
+
+- Redis를 이용한 총 포인트 수 표현  
+  point log와 user사이에 포인트 수를 표현하고 매핑하는 테이블을 넣는 대신  
+   Redis에 point log에서 WHERE절과 SUM연산으로 찾은 합산 포인트 수가  
+   결제가 이루어질 때마다 계산되어 담기게 하였습니다.  
+   Redis는 메모리 내에서 작동하기 때문에 시간 복잡도를 줄일 수 있고, 불필요한 매핑테이블을 만들지 않음으로서 공간 복잡도를 줄일 수 있습니다.
+
+  ### ERD
+
+  ![ERD](./public/assets/images/erd.png)

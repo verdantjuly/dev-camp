@@ -13,9 +13,6 @@ export class AccessLog extends BaseEntity {
   @Column()
   ip: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  accessedAt: Date;
-
   @ManyToOne(() => User, user => user.accessLogs, {
     nullable: true,
     onDelete: 'CASCADE',
