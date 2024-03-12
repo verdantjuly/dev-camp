@@ -10,7 +10,6 @@ export class CreateUserDto {
   readonly email: string;
 
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   readonly phone: string;
 
